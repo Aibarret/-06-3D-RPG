@@ -1,0 +1,158 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://Player/Player.gd" type="Script" id=1]
+[ext_resource path="res://Player/Player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Terrain.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Target/Target.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Player/RayCast.gd" type="Script" id=5]
+[ext_resource path="res://NPC/NPC.gd" type="Script" id=6]
+[ext_resource path="res://NPC/NPC.tscn" type="PackedScene" id=7]
+[ext_resource path="res://UI/Dialogue.gd" type="Script" id=8]
+[ext_resource path="res://UI.gd" type="Script" id=9]
+[ext_resource path="res://Drone/Drone.tscn" type="PackedScene" id=10]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0.992157, 0.0117647, 0.0117647, 1 )
+emission_enabled = true
+emission = Color( 1, 0, 0, 1 )
+emission_energy = 3.0
+emission_operator = 0
+emission_on_uv2 = false
+
+[sub_resource type="SphereMesh" id=2]
+material = SubResource( 1 )
+radius = 0.5
+height = 1.0
+
+[sub_resource type="SphereShape" id=3]
+radius = 4.37844
+
+[node name="Game" type="Spatial"]
+
+[node name="Player" parent="." instance=ExtResource( 2 )]
+transform = Transform( 0.899092, 0, 0.437759, 0, 1, 0, -0.437759, 0, 0.899092, 14.1807, 0.695304, -9.94965 )
+collision_layer = 3
+collision_mask = 2147483651
+script = ExtResource( 1 )
+speed = 20.0
+
+[node name="Pivot" type="Position3D" parent="Player"]
+
+[node name="Camera" type="Camera" parent="Player/Pivot"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 4.3723, -5 )
+
+[node name="RayCast" type="RayCast" parent="Player/Pivot"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.134764, 3.01972, 3.30438 )
+enabled = true
+cast_to = Vector3( 0, 0, 100 )
+script = ExtResource( 5 )
+
+[node name="Redicule" type="Position3D" parent="Player/Pivot/RayCast"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 50 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Player/Pivot/RayCast/Redicule"]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="lowpoly_scene" parent="." instance=ExtResource( 3 )]
+transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0.410646, 0 )
+
+[node name="Target_container" type="Spatial" parent="."]
+visible = false
+
+[node name="Target" parent="Target_container" instance=ExtResource( 4 )]
+transform = Transform( 0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.939693, -27, 4, 9 )
+
+[node name="Target3" parent="Target_container" instance=ExtResource( 4 )]
+transform = Transform( 0.791672, 0, -0.610947, 0, 1, 0, 0.610947, 0, 0.791672, -17.5773, 6.46944, -23.4642 )
+
+[node name="Target2" parent="Target_container" instance=ExtResource( 4 )]
+transform = Transform( 0.684382, 0, -0.729124, 0, 1, 0, 0.729124, 0, 0.684382, -2.07537, 4.52458, -21.9005 )
+
+[node name="Drone_container" type="Spatial" parent="."]
+
+[node name="Drone" parent="Drone_container" instance=ExtResource( 10 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -38.3063, 20, 0 )
+
+[node name="NPC" parent="." instance=ExtResource( 7 )]
+transform = Transform( -0.725398, 0, 0.688329, 0, 1, 0, -0.688329, 0, -0.725398, 10.767, 0.517943, -0.617668 )
+script = ExtResource( 6 )
+
+[node name="Area" type="Area" parent="NPC"]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape" type="CollisionShape" parent="NPC/Area"]
+shape = SubResource( 3 )
+
+[node name="UI" type="CanvasLayer" parent="."]
+script = ExtResource( 9 )
+
+[node name="Damage" type="ColorRect" parent="UI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 1, 0, 0, 0 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Background" type="ColorRect" parent="UI"]
+anchor_right = 1.0
+margin_bottom = 30.0
+color = Color( 0, 0, 0, 0.109804 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Score" type="Label" parent="UI"]
+margin_left = 10.0
+margin_right = 510.0
+margin_bottom = 30.0
+text = "Score:"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Time" type="Label" parent="UI"]
+margin_left = 512.0
+margin_right = 1014.0
+margin_bottom = 30.0
+text = "Time: 00:00"
+align = 2
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Timer" type="Timer" parent="UI"]
+
+[node name="Dialogue" type="Control" parent="UI"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Background" type="ColorRect" parent="UI/Dialogue"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -30.0
+margin_bottom = -1.0
+color = Color( 0, 0, 0, 0.6 )
+
+[node name="Text" type="RichTextLabel" parent="UI/Dialogue"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -20.0
+margin_bottom = 10.0
+bbcode_enabled = true
+bbcode_text = "[center]Hello[/center]"
+text = "Hello"
+[connection signal="body_entered" from="NPC/Area" to="NPC" method="_on_Area_body_entered"]
+[connection signal="body_exited" from="NPC/Area" to="NPC" method="_on_Area_body_exited"]
+[connection signal="timeout" from="UI/Timer" to="UI" method="_on_Timer_timeout"]
